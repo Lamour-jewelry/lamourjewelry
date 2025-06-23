@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>L'Amour Jewelry</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">L'Amour <span>Jewelry</span></div>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#shop">Shop</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <div class="cart-icon" id="cartBtn">
+        <span class="cart-badge" id="cartCount">0</span>
+        <img src="https://img.icons8.com/ios-filled/30/d4af37/shopping-cart.png" alt="Cart"/>
+      </div>
+      <div id="accountInfo" style="display:none;"></div>
+      <div class="login-dropdown" id="loginDropdown">
+        <button id="loginBtn">Login</button>
+        <div class="dropdown-content" id="loginOptions">
+          <button id="googleLogin">Google Login</button>
+          <button id="guestLogin">Guest Login</button>
+          <button id="emailLogin">Email Login</button>
+          <button id="emailSignup">Email Sign-up</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <h1>Luxury Redefined</h1>
+      <p>Discover timeless elegance with L'Amour Jewelry</p>
+      <div class="hero-ctas">
+        <a href="#shop" class="btn gold">Shop Now</a>
+        <a href="#about" class="btn outline">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Filter -->
+  <section class="filters" id="shop">
+    <div class="filter-categories">
+      <button data-category="all" class="active">All</button>
+      <button data-category="rings">Rings</button>
+      <button data-category="necklaces">Necklaces</button>
+      <button data-category="bracelets">Bracelets</button>
+      <button data-category="earrings">Earrings</button>
+    </div>
+    <div class="filter-price">
+      <label for="priceRange">Price:</label>
+      <input type="range" id="priceRange" min="0" max="1000" step="10" value="1000">
+      <span id="priceValue">$1000</span>
+    </div>
+  </section>
+
+  <!-- Product Grid -->
+  <section class="product-grid" id="productGrid">
+    <!-- Products rendered by JS -->
+  </section>
+
+  <!-- Cart Modal -->
+  <div class="modal" id="cartModal">
+    <div class="modal-content">
+      <span class="close" id="closeCart">&times;</span>
+      <h2>Your Cart</h2>
+      <div id="cartItems"></div>
+      <div class="cart-summary">
+        <span>Subtotal:</span>
+        <span id="cartSubtotal">$0</span>
+      </div>
+      <button class="btn gold" id="checkoutBtn">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div class="modal" id="checkoutModal">
+    <div class="modal-content">
+      <span class="close" id="closeCheckout">&times;</span>
+      <h2>Checkout</h2>
+      <form id="checkoutForm">
+        <input type="text" placeholder="Name" name="name" required />
+        <input type="email" placeholder="Email" name="email" required />
+        <input type="tel" placeholder="Phone Number" name="number" required />
+        <input type="text" placeholder="Address Line 1" name="address1" required />
+        <input type="text" placeholder="Address Line 2" name="address2" />
+        <input type="text" placeholder="Address Line 3" name="address3" />
+        <div class="order-summary" id="orderSummary"></div>
+        <button type="submit" class="btn gold">Place Order</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- About Section -->
+  <section class="about" id="about">
+    <div class="about-grid">
+      <div class="about-text">
+        <h2>About L'Amour</h2>
+        <p>
+          L'Amour Jewelry is where timeless elegance meets modern artistry. Our philosophy is rooted in the belief that every piece of jewelry should be as unique and precious as the person who wears it. From the initial sketch to the final polish, each creation is a testament to our passion for craftsmanship and our commitment to quality.
+        </p>
+        <p>
+          Our artisans blend traditional techniques with contemporary design, using only the finest ethically sourced materials—gleaming gold, radiant gemstones, and lustrous pearls. Every collection is inspired by the stories of love, celebration, and individuality, ensuring that each piece is not just an accessory, but a cherished memory.
+        </p>
+        <p>
+          At L'Amour, we believe in the power of detail. Our jewelry is meticulously crafted to capture the light, the moment, and the imagination. Whether you are marking a milestone or simply expressing your style, our pieces are designed to be treasured for a lifetime.
+        </p>
+      </div>
+      <div class="about-image">
+        <img src="jewellery.jpg" alt="About L'Amour"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials">
+    <h2>What Our Customers Say</h2>
+    <div class="testimonial-cards">
+      <div class="testimonial-card">
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Customer"/>
+        <h3>Emily R.</h3>
+        <p>"Absolutely stunning pieces! The quality and design are unmatched."</p>
+      </div>
+      <div class="testimonial-card">
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Customer"/>
+        <h3>James L.</h3>
+        <p>"The customer service was fantastic and my wife loved her necklace."</p>
+      </div>
+      <div class="testimonial-card">
+        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Customer"/>
+        <h3>Sophia M.</h3>
+        <p>"Fast shipping and beautiful packaging. Will shop again!"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter Signup -->
+  <section class="newsletter">
+    <h2>Stay in Touch</h2>
+    <form id="newsletterForm">
+      <input type="email" placeholder="Your email address" required />
+      <button type="submit" class="btn gold">Subscribe</button>
+    </form>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact" id="contact">
+    <h2>Contact Us</h2>
+    <form id="contactForm">
+      <input type="text" placeholder="Name" name="name" required />
+      <input type="email" placeholder="Email" name="email" required />
+      <input type="text" placeholder="Subject" name="subject" required />
+      <textarea placeholder="Message" name="message" required></textarea>
+      <button type="submit" class="btn gold">Send Message</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">L'Amour <span>Jewelry</span></div>
+        <div class="footer-social">
+          <a href="#"><img src="https://img.icons8.com/ios-filled/24/d4af37/instagram-new.png" alt="Instagram"/></a>
+          <a href="#"><img src="https://img.icons8.com/ios-filled/24/d4af37/facebook-new.png" alt="Facebook"/></a>
+          <a href="#"><img src="https://img.icons8.com/ios-filled/24/d4af37/pinterest--v1.png" alt="Pinterest"/></a>
+          <a href="#"><img src="https://img.icons8.com/ios-filled/24/d4af37/twitter.png" alt="Twitter"/></a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <div>
+          <h4>Shop</h4>
+          <a href="#shop">Rings</a>
+          <a href="#shop">Necklaces</a>
+          <a href="#shop">Bracelets</a>
+          <a href="#shop">Earrings</a>
+        </div>
+        <div>
+          <h4>Information</h4>
+          <a href="#about">About Us</a>
+          <a href="terms.html" target="_blank">Terms & Conditions</a>
+          <a href="returns.html" target="_blank">Return Policy</a>
+        </div>
+        <div>
+          <h4>Customer Service</h4>
+          <a href="#contact">Contact Us</a>
+          <a href="#">FAQs</a>
+          <a href="shipping.html" target="_blank">Shipping & Returns</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2024 L'Amour Jewelry. All rights reserved.</div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
