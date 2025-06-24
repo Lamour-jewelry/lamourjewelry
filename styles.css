@@ -800,4 +800,90 @@ footer {
   .mobile-nav.open {
     transform: translateX(0);
   }
+}
+
+.desktop-only { display: inline-block; }
+.mobile-only { display: none; }
+
+@media (max-width: 600px) {
+  .desktop-only { display: none !important; }
+  .mobile-only { display: block !important; }
+  .mobile-account-dropdown {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  #mobileAccountBtn {
+    width: 100%;
+    padding: 0.7rem 0;
+    font-size: 1.1rem;
+    border-radius: 24px;
+    background: var(--gold);
+    color: var(--dark-gray);
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+  }
+  #mobileAccountOptions {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 110%;
+    width: 100%;
+    background: var(--dark-gray);
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    z-index: 20;
+    flex-direction: column;
+    padding: 0.5rem 0;
+  }
+  .mobile-account-dropdown.open #mobileAccountOptions {
+    display: flex;
+  }
+  #mobileAccountOptions button {
+    background: none;
+    border: none;
+    color: var(--white);
+    padding: 1rem 1.2rem;
+    text-align: left;
+    font-size: 1.08rem;
+    cursor: pointer;
+    transition: background var(--transition);
+    width: 100%;
+  }
+  #mobileAccountOptions button:hover {
+    background: var(--gold);
+    color: var(--dark-gray);
+  }
+  .nav-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.7rem;
+    width: 100%;
+  }
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+  .hero-ctas {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .about, .testimonials, .newsletter, .contact, footer {
+    padding: 1.5rem 2vw;
+  }
+  .about-grid, .footer-grid, .testimonial-cards {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .product-grid {
+    grid-template-columns: 1fr;
+    padding: 1rem 2vw;
+  }
+  .btn, .btn.gold, .btn.outline {
+    font-size: 1.05rem;
+    padding: 0.7rem 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
 } 

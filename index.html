@@ -34,13 +34,22 @@
         <img src="https://img.icons8.com/ios-filled/30/d4af37/shopping-cart.png" alt="Cart"/>
       </div>
       <div id="accountInfo" style="display:none;"></div>
-      <div class="login-dropdown" id="loginDropdown">
+      <button id="emailSignupBtn" class="btn outline desktop-only" style="margin-right:0.5rem;">Sign-up</button>
+      <div class="login-dropdown desktop-only" id="loginDropdown">
         <button id="loginBtn">Login</button>
         <div class="dropdown-content" id="loginOptions">
           <button id="googleLogin">Google Login</button>
-          <button id="guestLogin">Guest Login</button>
           <button id="emailLogin">Email Login</button>
-          <button id="emailSignup">Email Sign-up</button>
+          <button id="guestLogin">Guest Login</button>
+        </div>
+      </div>
+      <div class="mobile-account-dropdown mobile-only" id="mobileAccountDropdown">
+        <button id="mobileAccountBtn">Account</button>
+        <div class="dropdown-content" id="mobileAccountOptions">
+          <button id="googleLoginMobile">Google Login</button>
+          <button id="emailLoginMobile">Email Login</button>
+          <button id="guestLoginMobile">Guest Login</button>
+          <button id="emailSignupMobile">Email Sign-up</button>
         </div>
       </div>
     </div>

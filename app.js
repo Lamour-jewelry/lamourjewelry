@@ -51,6 +51,8 @@ const filterCategories = document.querySelectorAll('.filter-categories button');
 const priceRange = document.getElementById('priceRange');
 const priceValue = document.getElementById('priceValue');
 const accountInfo = document.getElementById('accountInfo');
+const emailSignupBtn = document.getElementById('emailSignupBtn');
+const googleLoginBtn = document.getElementById('googleLoginBtn');
 
 // --- State ---
 let currentUser = null;
@@ -81,9 +83,8 @@ document.addEventListener('click', (e) => {
 googleLogin.onclick = () => {
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider)
-    .then(result => Swal.fire({
-      title: 'Welcome!',
-      text: 'Logged in as ' + result.user.displayName,
+    .then(() => Swal.fire({
+      title: 'Logged in with Google!',
       icon: 'success',
       ...swalTheme
     }))
@@ -137,34 +138,53 @@ emailLogin.onclick = () => {
     }
   });
 };
-emailSignup.onclick = () => {
-  Swal.fire({
-    title: 'Sign Up',
-    html: '<input id="swal-email" class="swal2-input" placeholder="Email"><input id="swal-pass" type="password" class="swal2-input" placeholder="Password">',
-    preConfirm: () => {
-      const email = document.getElementById('swal-email').value;
-      const pass = document.getElementById('swal-pass').value;
-      return { email, pass };
-    },
-    showCancelButton: true,
-    ...swalTheme
-  }).then(result => {
-    if (result.isConfirmed) {
-      auth.createUserWithEmailAndPassword(result.value.email, result.value.pass)
-        .then(() => Swal.fire({
-          title: 'Account created!',
-          icon: 'success',
-          ...swalTheme
-        }))
-        .catch(err => Swal.fire({
-          title: 'Error',
-          text: err.message,
-          icon: 'error',
-          ...swalTheme
-        }));
-    }
-  });
-};
+if (emailSignupBtn) {
+  emailSignupBtn.onclick = () => {
+    Swal.fire({
+      title: 'Sign Up',
+      html: '<input id="swal-email" class="swal2-input" placeholder="Email"><input id="swal-pass" type="password" class="swal2-input" placeholder="Password">',
+      preConfirm: () => {
+        const email = document.getElementById('swal-email').value;
+        const pass = document.getElementById('swal-pass').value;
+        return { email, pass };
+      },
+      showCancelButton: true,
+      ...swalTheme
+    }).then(result => {
+      if (result.isConfirmed) {
+        auth.createUserWithEmailAndPassword(result.value.email, result.value.pass)
+          .then(() => Swal.fire({
+            title: 'Account created!',
+            icon: 'success',
+            ...swalTheme
+          }))
+          .catch(err => Swal.fire({
+            title: 'Error',
+            text: err.message,
+            icon: 'error',
+            ...swalTheme
+          }));
+      }
+    });
+  };
+}
+if (googleLoginBtn) {
+  googleLoginBtn.onclick = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then(() => Swal.fire({
+        title: 'Logged in with Google!',
+        icon: 'success',
+        ...swalTheme
+      }))
+      .catch(err => Swal.fire({
+        title: 'Error',
+        text: err.message,
+        icon: 'error',
+        ...swalTheme
+      }));
+  };
+}
 auth.onAuthStateChanged(async user => {
   currentUser = user;
   const loginDropdown = document.getElementById('loginDropdown');
@@ -572,4 +592,122 @@ document.addEventListener('click', (e) => {
     hamburgerBtn.setAttribute('aria-expanded', false);
     mobileNav.setAttribute('aria-hidden', true);
   }
-}); 
+});
+
+// --- Mobile Account Dropdown Logic ---
+const mobileAccountDropdown = document.getElementById('mobileAccountDropdown');
+const mobileAccountBtn = document.getElementById('mobileAccountBtn');
+const mobileAccountOptions = document.getElementById('mobileAccountOptions');
+const googleLoginMobile = document.getElementById('googleLoginMobile');
+const emailLoginMobile = document.getElementById('emailLoginMobile');
+const guestLoginMobile = document.getElementById('guestLoginMobile');
+const emailSignupMobile = document.getElementById('emailSignupMobile');
+
+if (mobileAccountBtn) {
+  mobileAccountBtn.onclick = (e) => {
+    e.stopPropagation();
+    mobileAccountDropdown.classList.toggle('open');
+  };
+  document.addEventListener('click', (e) => {
+    if (mobileAccountDropdown.classList.contains('open') && !mobileAccountDropdown.contains(e.target)) {
+      mobileAccountDropdown.classList.remove('open');
+    }
+  });
+}
+if (googleLoginMobile) {
+  googleLoginMobile.onclick = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then(() => Swal.fire({
+        title: 'Logged in with Google!',
+        icon: 'success',
+        ...swalTheme
+      }))
+      .catch(err => Swal.fire({
+        title: 'Error',
+        text: err.message,
+        icon: 'error',
+        ...swalTheme
+      }));
+    mobileAccountDropdown.classList.remove('open');
+  };
+}
+if (emailLoginMobile) {
+  emailLoginMobile.onclick = () => {
+    Swal.fire({
+      title: 'Email Login',
+      html: '<input id="swal-email" class="swal2-input" placeholder="Email"><input id="swal-pass" type="password" class="swal2-input" placeholder="Password">',
+      preConfirm: () => {
+        const email = document.getElementById('swal-email').value;
+        const pass = document.getElementById('swal-pass').value;
+        return { email, pass };
+      },
+      showCancelButton: true,
+      ...swalTheme
+    }).then(result => {
+      if (result.isConfirmed) {
+        auth.signInWithEmailAndPassword(result.value.email, result.value.pass)
+          .then(() => Swal.fire({
+            title: 'Logged in!',
+            icon: 'success',
+            ...swalTheme
+          }))
+          .catch(err => Swal.fire({
+            title: 'Error',
+            text: err.message,
+            icon: 'error',
+            ...swalTheme
+          }));
+      }
+    });
+    mobileAccountDropdown.classList.remove('open');
+  };
+}
+if (guestLoginMobile) {
+  guestLoginMobile.onclick = () => {
+    auth.signInAnonymously()
+      .then(() => Swal.fire({
+        title: 'Logged in as Guest!',
+        icon: 'success',
+        ...swalTheme
+      }))
+      .catch(err => Swal.fire({
+        title: 'Error',
+        text: err.message,
+        icon: 'error',
+        ...swalTheme
+      }));
+    mobileAccountDropdown.classList.remove('open');
+  };
+}
+if (emailSignupMobile) {
+  emailSignupMobile.onclick = () => {
+    Swal.fire({
+      title: 'Sign Up',
+      html: '<input id="swal-email" class="swal2-input" placeholder="Email"><input id="swal-pass" type="password" class="swal2-input" placeholder="Password">',
+      preConfirm: () => {
+        const email = document.getElementById('swal-email').value;
+        const pass = document.getElementById('swal-pass').value;
+        return { email, pass };
+      },
+      showCancelButton: true,
+      ...swalTheme
+    }).then(result => {
+      if (result.isConfirmed) {
+        auth.createUserWithEmailAndPassword(result.value.email, result.value.pass)
+          .then(() => Swal.fire({
+            title: 'Account created!',
+            icon: 'success',
+            ...swalTheme
+          }))
+          .catch(err => Swal.fire({
+            title: 'Error',
+            text: err.message,
+            icon: 'error',
+            ...swalTheme
+          }));
+      }
+    });
+    mobileAccountDropdown.classList.remove('open');
+  };
+} 
