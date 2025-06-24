@@ -61,14 +61,14 @@ let maxPrice = 1000;
 
 // --- Product Data (placeholder) ---
 const products = [
-  { id: 1, name: "Gold Elegance Ring", price: 299, oldPrice: 399, image: "https://source.unsplash.com/400x400/?ring,jewelry", badge: "Bestseller", category: "rings" },
-  { id: 2, name: "Diamond Halo Necklace", price: 499, oldPrice: 599, image: "https://source.unsplash.com/400x400/?necklace,jewelry", badge: "Luxury", category: "necklaces" },
-  { id: 3, name: "Classic Gold Bracelet", price: 199, oldPrice: 249, image: "https://source.unsplash.com/400x400/?bracelet,jewelry", badge: "New", category: "bracelets" },
-  { id: 4, name: "Pearl Drop Earrings", price: 159, oldPrice: 199, image: "https://source.unsplash.com/400x400/?earrings,jewelry", badge: "Bestseller", category: "earrings" },
-  { id: 5, name: "Rose Gold Band", price: 349, oldPrice: 399, image: "https://source.unsplash.com/400x400/?ring,rose-gold", badge: "Luxury", category: "rings" },
-  { id: 6, name: "Emerald Pendant Necklace", price: 429, oldPrice: 499, image: "https://source.unsplash.com/400x400/?necklace,emerald", badge: "New", category: "necklaces" },
-  { id: 7, name: "Sapphire Tennis Bracelet", price: 599, oldPrice: 699, image: "https://source.unsplash.com/400x400/?bracelet,sapphire", badge: "Luxury", category: "bracelets" },
-  { id: 8, name: "Minimalist Stud Earrings", price: 99, oldPrice: 129, image: "https://source.unsplash.com/400x400/?earrings,minimalist", badge: "New", category: "earrings" }
+  { id: 1, name: "Gold Elegance Ring", price: 299, oldPrice: 399, image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80", badge: "Bestseller", category: "rings" },
+  { id: 2, name: "Diamond Halo Necklace", price: 499, oldPrice: 599, image: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80", badge: "Luxury", category: "necklaces" },
+  { id: 3, name: "Classic Gold Bracelet", price: 199, oldPrice: 249, image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80", badge: "New", category: "bracelets" },
+  { id: 4, name: "Pearl Drop Earrings", price: 159, oldPrice: 199, image: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80", badge: "Bestseller", category: "earrings" },
+  { id: 5, name: "Rose Gold Band", price: 349, oldPrice: 399, image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80", badge: "Luxury", category: "rings" },
+  { id: 6, name: "Emerald Pendant Necklace", price: 429, oldPrice: 499, image: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?auto=format&fit=crop&w=400&q=80", badge: "New", category: "necklaces" },
+  { id: 7, name: "Sapphire Tennis Bracelet", price: 599, oldPrice: 699, image: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80", badge: "Luxury", category: "bracelets" },
+  { id: 8, name: "Minimalist Stud Earrings", price: 99, oldPrice: 129, image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80", badge: "New", category: "earrings" }
 ];
 
 // --- Auth Functions ---
@@ -381,6 +381,33 @@ checkoutForm.onsubmit = async (e) => {
   };
   try {
     await db.collection('orders').add(order);
+    // Send order confirmation email via EmailJS
+    if (window.emailjs) {
+      const orderItemsHtml = order.items.map(item => `${item.name} × ${item.qty} (PKR ${item.price * item.qty})`).join('\n');
+      const total = order.items.reduce((sum, item) => sum + item.price * item.qty, 0);
+      emailjs.send('service_4360mnd', 'template_gzx8kp8', {
+        from_name: userInfo.name,
+        from_email: userInfo.email,
+        to_name: userInfo.name,
+        to_email: userInfo.email,
+        phone: userInfo.number,
+        address1: userInfo.address1,
+        address2: userInfo.address2,
+        address3: userInfo.address3,
+        order_items: orderItemsHtml,
+        order_total: total
+      })
+      .then(function() {
+        // Email sent successfully (do nothing extra)
+      }, function(error) {
+        Swal.fire({
+          title: 'Order Placed! (Email Failed)',
+          text: 'Order saved, but confirmation email could not be sent. Please contact support if needed.',
+          icon: 'warning',
+          ...swalTheme
+        });
+      });
+    }
     Swal.fire({
       title: 'Order Placed!',
       text: 'Thank you for your purchase.',
@@ -412,16 +439,43 @@ document.getElementById('newsletterForm').onsubmit = e => {
   });
 };
 
-// --- Contact (UI only) ---
-document.getElementById('contactForm').onsubmit = e => {
-  e.preventDefault();
-  Swal.fire({
-    title: 'Message Sent!',
-    text: 'We will get back to you soon.',
-    icon: 'success',
-    ...swalTheme
-  });
-};
+// --- EmailJS Contact Form Integration ---
+if (window.emailjs) {
+  emailjs.init('1nr9veGnJy1JmvgFK');
+}
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+  contactForm.onsubmit = function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.name.value;
+    const email = form.email.value;
+    const subject = form.subject.value;
+    const message = form.message.value;
+    emailjs.send('service_4360mnd', 'template_gzx8kp8', {
+      from_name: name,
+      from_email: email,
+      subject: subject,
+      message: message
+    })
+    .then(function() {
+      Swal.fire({
+        title: 'Message Sent!',
+        text: 'Thank you for contacting us. We will get back to you soon.',
+        icon: 'success',
+        ...swalTheme
+      });
+      form.reset();
+    }, function(error) {
+      Swal.fire({
+        title: 'Error',
+        text: 'There was a problem sending your message. Please try again later.',
+        icon: 'error',
+        ...swalTheme
+      });
+    });
+  };
+}
 
 // --- Initial Render ---
 renderProducts();
@@ -492,3 +546,30 @@ function enhanceModalCloseButtons() {
   });
 }
 setTimeout(enhanceModalCloseButtons, 100); // Run after DOM is ready 
+
+// --- Mobile Nav Logic ---
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const mobileNav = document.getElementById('mobileNav');
+
+hamburgerBtn.onclick = (e) => {
+  e.stopPropagation();
+  const isOpen = mobileNav.classList.toggle('open');
+  hamburgerBtn.setAttribute('aria-expanded', isOpen);
+  mobileNav.setAttribute('aria-hidden', !isOpen);
+};
+
+// Close mobile nav when clicking a link or outside
+mobileNav.onclick = (e) => {
+  if (e.target.tagName === 'A') {
+    mobileNav.classList.remove('open');
+    hamburgerBtn.setAttribute('aria-expanded', false);
+    mobileNav.setAttribute('aria-hidden', true);
+  }
+};
+document.addEventListener('click', (e) => {
+  if (mobileNav.classList.contains('open') && !mobileNav.contains(e.target) && e.target !== hamburgerBtn) {
+    mobileNav.classList.remove('open');
+    hamburgerBtn.setAttribute('aria-expanded', false);
+    mobileNav.setAttribute('aria-hidden', true);
+  }
+}); 
